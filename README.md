@@ -1,6 +1,6 @@
 # Knife::Dsl
 
-TODO: Write a gem description
+A small library that lets you drive Chef's 'knife' programmatically
 
 ## Installation
 
@@ -18,7 +18,53 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+The main feature of this library is the ability to drive knife as a method call
+as opposed to an individual program. This has a number of benefits:
+
+* It's a lot faster
+* You can capture output
+* You're relying on code that has a contract to maintain compatible with Chef
+* Use knife plugins all you want without breaking your workflow
+* Optionally, Chef becomes constrained by a gemfile (as do the plugins you use)
+  and that constraint remains consistent.
+
+It provides two calls, `knife` and `knife_capture` that are injected into the
+top-level namespace automatically. Additionally, if you are using `rake`, it
+will detect this and make it available to rake's DSL as well.
+
+If you wish to use this code elsewhere, just `include Chef::Knife::DSL` into
+your classes/modules.
+
+Both commands take two argument-passing styles. Both use an array of strings to
+represent the ARGV passed to knife, but there is additionally a shorthand to
+make the actual subcommand stand out: if you supply a symbol or string with
+underscore-delimited subcommand names, it will automatically convert this for
+you. This allows you to visually distinguish a command from its arguments.
+
+knife-dsl allows the use of alternative Chef Configs via the `CHEF_CONFIG`
+environment variable.
+
+## Example
+
+Here's a `Rakefile` which lists nodes in one task, and in another, converts the
+node metadata supplied by `knife node show $x` to something suitable to display
+with `pp`. The practical applications of both tasks are pretty specious, but
+they're small and display the functionality.
+
+```ruby
+require 'knife/dsl'
+require 'pp'
+require 'json'
+
+task :list_nodes do
+  knife :node_list
+end
+
+task :show_node, :node_name do |task_name, args|
+  stdout, stderr = knife_capture :node_show, [args[:node_name], '-F', 'j']
+  pp JSON.load(stdout)
+end
+```
 
 ## Contributing
 
