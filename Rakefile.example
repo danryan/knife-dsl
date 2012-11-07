@@ -1,5 +1,0 @@
-require 'knife/dsl'
-
-task :list_nodes do
-  knife :node_list
-end
