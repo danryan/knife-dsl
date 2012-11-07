@@ -1,6 +1,6 @@
-# Knife::Dsl
+# Knife-DSL
 
-A small library that lets you drive Chef's 'knife' programmatically
+A small library that lets you drive Chef's `knife` programmatically
 
 ## Installation
 
