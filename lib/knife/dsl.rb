@@ -1,4 +1,5 @@
 require 'chef/application/knife'
+require 'knife/dsl/version'
 require 'stringio'
 
 module Chef::Knife::DSL
