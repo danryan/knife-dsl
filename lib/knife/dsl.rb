@@ -17,6 +17,9 @@ module Chef::Knife::DSL
 
       opts = Chef::Application::Knife.new.options
       Chef::Knife.run(command, opts)
+      return 0
+    rescue SystemExit => e
+      return e.status
     end
   end
 
@@ -36,8 +39,8 @@ module Chef::Knife::DSL
     Object.const_set("STDIN", input ? StringIO.new(input, 'r') : null)
     $VERBOSE = warn
 
-    Chef::Knife::DSL::Support.run_knife(command, args)
-    return STDOUT.string, STDERR.string
+    status = Chef::Knife::DSL::Support.run_knife(command, args)
+    return STDOUT.string, STDERR.string, status
   ensure
     warn = $VERBOSE 
     $VERBOSE = nil

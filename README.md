@@ -57,11 +57,13 @@ require 'pp'
 require 'json'
 
 task :list_nodes do
-  knife :node_list
+  status = knife :node_list
+  fail if status > 0
 end
 
 task :show_node, :node_name do |task_name, args|
-  stdout, stderr = knife_capture :node_show, [args[:node_name], '-F', 'j']
+  stdout, stderr, status = knife_capture :node_show, [args[:node_name], '-F', 'j']
+  fail if status > 0
   pp JSON.load(stdout)
 end
 ```
